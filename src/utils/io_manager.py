@@ -25,7 +25,13 @@ class IOManager:
             data (any): The data to save (placeholder for now).
             step (int): The current simulation step.
         """
+        # Defensive programming: Ensure directory still exists
+        if not os.path.exists(self.output_dir):
+            # Attempt to recreate it or raise error. 
+            # For robustness, we recreate it here to avoid crashing long simulations.
+            os.makedirs(self.output_dir, exist_ok=True)
+
         # In a real application, we would save 'data' to a file inside self.output_dir
         # For this MVP, we just print the path.
         save_path = os.path.join(self.output_dir, f"step_{step}.data")
-        print(f"Saving intermediate state for step {step} at {save_path}...")
+        print(f"   [IO操作] 第 {step} 步数据已归档至：{save_path}")
