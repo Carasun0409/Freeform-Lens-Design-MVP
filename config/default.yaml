@@ -1,0 +1,8 @@
+project_name: "MVP_Test_Run"
+lens_params:
+  radius: 20
+  material: "PMMA"
+  refractive_index: 1.49
+simulation:
+  max_iter: 10
+  save_interval: 2

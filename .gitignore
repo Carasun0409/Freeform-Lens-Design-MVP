@@ -1,0 +1,10 @@
+# .gitignore
+__pycache__/
+*.pyc
+.DS_Store
+.idea/
+.vscode/
+data/output/*
+data/temp/*
+!data/output/.gitkeep
+!data/temp/.gitkeep
