@@ -23,11 +23,14 @@ class LensDesignSolver:
             if param not in self.lens_params:
                 raise ValueError(f"错误：配置文件缺少必要参数 [{param}]")
 
-        # 2. Extract parameters (safe now)
+        # 2. Archive Configuration Snapshot (BEFORE simulation starts)
+        self.io_manager.save_run_config(self.config)
+
+        # 3. Extract parameters (safe now)
         material = self.lens_params['material']
         radius = self.lens_params['radius']
         
-        # 3. Professional Logging (Initialization)
+        # 4. Professional Logging (Initialization)
         print(f">>> [初始化] 正在加载设计参数：材料={material}, 半径={radius}...")
         
         # Default fallback is only allowed for simulation control params if not critical
@@ -35,7 +38,7 @@ class LensDesignSolver:
         save_interval = self.simulation_params.get('save_interval', 1)
         
         for step in range(1, max_iter + 1):
-            # 4. Professional Logging (Calculation)
+            # 5. Professional Logging (Calculation)
             print(f">>> [计算] 正在执行第 {step}/{max_iter} 步迭代...")
             
             # Simulate design calculation step
@@ -43,6 +46,8 @@ class LensDesignSolver:
             
             # Check if we need to save this step
             if step % save_interval == 0:
-                self.io_manager.save_state(current_state, step)
+                # Format filename clearly and orderly
+                filename = f"iter_{step:03d}_data.txt"
+                self.io_manager.save_state(current_state, filename)
                 
         print(">>> [完成] 模拟设计流程结束。")

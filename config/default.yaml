@@ -1,3 +1,4 @@
+description: "测试实验_V1：尝试增大透镜半径以观察光斑变化"
 project_name: "MVP_Test_Run"
 lens_params:
   radius: 20
