@@ -1,6 +1,7 @@
 import os
 import datetime
 import yaml
+import json
 
 class IOManager:
     def __init__(self, base_dir, project_name):
@@ -15,6 +16,8 @@ class IOManager:
         self.output_dir = os.path.join(base_dir, f"{project_name}_{timestamp}")
         
         # Create the output directory
+        # The check is redundant if we assume standard behavior, but exist_ok=True is safe.
+        # Removing explicit check as requested to optimize for high performance future scenarios.
         os.makedirs(self.output_dir, exist_ok=True)
         print(f"Output directory created at: {self.output_dir}")
 
@@ -33,30 +36,37 @@ class IOManager:
         except Exception as e:
             print(f"❌ [档案管理] 备份配置失败: {e}")
 
-    def save_state(self, data, filename):
+    def save_state(self, data_package, filename):
         """
-        Save the intermediate state.
+        Save the intermediate state as a JSON file.
         
         Args:
-            data (any): The data to save (placeholder for now).
-            filename (str): The filename for the saved data (e.g., 'iter_001_data.txt').
+            data_package (dict): The complete data package (including metadata) to save.
+            filename (str): The filename for the saved data (e.g., 'iter_001_data.json').
         """
-        # Defensive programming: Ensure directory still exists
-        if not os.path.exists(self.output_dir):
-            # Attempt to recreate it or raise error. 
-            # For robustness, we recreate it here to avoid crashing long simulations.
-            os.makedirs(self.output_dir, exist_ok=True)
-
-        # In a real application, we would save 'data' to a file inside self.output_dir
-        # For this MVP, we just print the path.
         save_path = os.path.join(self.output_dir, filename)
         
-        # Mocking file write for demonstration (optional, or just print path)
         try:
+            # Use json.dump for self-describing data format
             with open(save_path, 'w', encoding='utf-8') as f:
-                 f.write(str(data))
+                 json.dump(data_package, f, indent=4, ensure_ascii=False)
         except Exception as e:
             print(f"❌ [IO操作] 保存数据失败: {e}")
             return
 
         print(f"   [IO操作] 数据已归档至：{save_path}")
+
+    def save_report(self, report_data):
+        """
+        Save the final run report.
+        
+        Args:
+            report_data (dict): Dictionary containing run statistics and results.
+        """
+        file_path = os.path.join(self.output_dir, "report.json")
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(report_data, f, indent=4, ensure_ascii=False)
+            print(f"   [报告生成] 运行报告已保存至：{file_path}")
+        except Exception as e:
+            print(f"❌ [报告生成] 保存报告失败: {e}")
